@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        jdk 'jdk17'
+        // jdk 'jdk17'
         nodejs 'node16'
     }
 
@@ -25,7 +25,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube-Server') {
+                withSonarQubeEnv('sonarqube') {
                     sh """
                         $SCANNER_HOME/bin/sonar-scanner \
                         -Dsonar.projectName=Youtube-CICD \
@@ -38,7 +38,7 @@ pipeline {
         stage('Quality Gate') {
             steps {
                 script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'SonarQube-Token'
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube'
                 }
             }
         }
@@ -87,18 +87,19 @@ pipeline {
             }
    
 
-    post {
-        always {
-            emailext(
-                attachLog: true,
-                subject: "'${currentBuild.result}'",
-                body: """Project: ${env.JOB_NAME}<br/>
-                         Build Number: ${env.BUILD_NUMBER}<br/>
-                         URL: ${env.BUILD_URL}<br/>""",
-                to: '2swapna69@gmail.com',
-                attachmentsPattern: 'trivyfs.txt,trivyimage.txt'
-            )
-        }
-    }
+    // post {
+    //     always {
+    //         emailext(
+    //             attachLog: true,
+    //             subject: "'${currentBuild.result}'",
+    //             body: """Project: ${env.JOB_NAME}<br/>
+    //                      Build Number: ${env.BUILD_NUMBER}<br/>
+    //                      URL: ${env.BUILD_URL}<br/>""",
+    //             to: '2swapna69@gmail.com',
+    //             attachmentsPattern: 'trivyfs.txt,trivyimage.txt'
+    //         )
+    //     }
+    // }
 }
+
 
